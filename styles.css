@@ -1,0 +1,1727 @@
+/* ==========================================================================
+   Paróquia Imaculado Coração de Maria — estilos da home
+   --------------------------------------------------------------------------
+   Organização:
+     1. Reset
+     2. Tokens
+     3. Base
+     4. Header
+     5. Hero
+     6. Atalhos (under-hero)
+     7. Cards de boas-vindas / notícias
+     8. Faixa de horários
+     9. Footer
+    10. Modais
+    11. Botão "voltar ao topo"
+    12. Barra de rolagem
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. Reset
+   Equivalente mínimo do que o antigo Tailwind (Preflight) fornecia.
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  line-height: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+p,
+blockquote,
+figure,
+pre {
+  margin: 0;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+  display: block;
+  vertical-align: middle;
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+button {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  /* O UA do Chromium aplica `letter-spacing: normal` em botões;
+     o Preflight do Tailwind restaurava a herança. */
+  letter-spacing: inherit;
+  cursor: pointer;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+
+/* ==========================================================================
+   2. Tokens
+   ========================================================================== */
+
+:root {
+  /* Paleta */
+  --bg: #f9f3ec;
+  --primary-blue: #18365a;
+  --bright-blue: #215084;
+  --gold: #b08d57;
+  --gold-light: #e1be6c;
+
+  /* Texto auxiliar */
+  --ink: #1e293b;
+  --muted: #64748b;
+  --muted-strong: #475569;
+  --muted-soft: #94a3b8;
+
+  /* Linhas e superfícies */
+  --line: #f1f5f9;
+  --line-strong: #e2e8f0;
+  --surface: #f9f3ec;
+
+  /* Hero: escala da animação de abertura */
+  --hero-scale: 6;
+  --logo-real-multiplier: var(--hero-scale);
+  --logo-visible: calc(var(--mary-size) * var(--heart-ratio));
+  --logo-real: calc(var(--logo-visible) * var(--logo-real-multiplier));
+  --heart-x: 49%;
+  --heart-y: 58%;
+  --heart-ratio: 0.20;
+  --mary-size: min(clamp(50px, 40vh, 70vw), 100vh);
+}
+
+
+/* ==========================================================================
+   3. Base
+   ========================================================================== */
+
+body {
+  height: 100dvh;
+  background-color: var(--bg);
+  color: var(--primary-blue);
+}
+
+body.scroll-lock {
+  overflow: hidden;
+}
+
+
+/* ==========================================================================
+   4. Header
+   ========================================================================== */
+
+.site-header {
+  z-index: 999;
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  right: 50%;
+  width: max-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateX(-50%);
+  opacity: 0;
+  will-change: opacity;
+
+  padding: 0 calc(env(safe-area-inset-left) - 20px);
+  padding-left: 40px;
+
+  border: 1px solid rgb(255 255 255 / 60%);
+  border-radius: calc(99px + 5%);
+  background-color: rgb(255 255 255 / 40%);
+  box-shadow: inset 0 2px 4px rgb(0 0 0 / 5%);
+
+  font-family: 'Cinzel', serif;
+}
+
+/* Estado aplicado pelo JS quando o hero sai da viewport */
+.site-header.is-scrolled {
+  background-color: var(--bg);
+}
+
+/* --- Identidade --- */
+
+.brand {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-right: 50px;
+}
+
+.brand>*+* {
+  margin-left: 0.75rem;
+}
+
+.brand__badge {
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+
+  border: 1px solid rgb(30 41 59 / 20%);
+  border-radius: 9999px;
+  background-color: rgb(255 255 255 / 80%);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+}
+
+.brand__text {
+  line-height: 1.25;
+}
+
+.brand__name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--primary-blue);
+}
+
+.brand__location {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgb(24 54 90 / 70%);
+}
+
+/* --- Navegação --- */
+
+/* Mantido oculto: no CSS anterior o utilitário `.hidden` (com !important)
+   anulava o `md:flex`, então a barra nunca era exibida. */
+.site-nav {
+  display: flex;
+  align-items: center;
+  padding: 0.6rem;
+  padding-right: 20px;
+
+  border: 1px solid rgb(255 255 255 / 60%);
+  border-radius: 9999px;
+  background-color: rgb(255 255 255 / 40%);
+  box-shadow: inset 0 2px 4px rgb(0 0 0 / 5%);
+
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--primary-blue);
+}
+
+.site-nav>*+* {
+  margin-left: 0.25rem;
+}
+
+.site-nav__list {
+  display: flex;
+}
+
+.site-nav__list>li {
+  display: flex;
+}
+
+.site-nav__link {
+  padding: 0.5rem 0.875rem;
+  border-radius: 9999px;
+
+  font-weight: 600;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  transition:
+    color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.site-nav__link:not(.site-nav__link--active):hover {
+  background-color: rgb(255 255 255 / 60%);
+  color: var(--bright-blue);
+}
+
+.site-nav__link--active {
+  padding: 0.5rem 1rem;
+  background-color: var(--bright-blue);
+  color: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+}
+
+.site-nav__search {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9999px;
+  color: var(--primary-blue);
+
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.site-nav__search:hover {
+  background-color: rgb(255 255 255 / 80%);
+}
+
+.site-nav__search-icon {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+/* --- Menu mobile --- */
+
+.site-header__toggle {
+  display: none;
+  align-items: center;
+}
+
+.menu-button {
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  color: var(--primary-blue);
+}
+
+.menu-button:hover {
+  background-color: rgb(255 255 255 / 50%);
+}
+
+.menu-button:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.menu-button__icon {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+/* Mantido oculto: o menu nunca era aberto pelo JS/CSS original. */
+.mobile-menu {
+  display: none;
+  padding: 0.5rem 1rem 1rem;
+
+  border-bottom: 1px solid #e5e7eb;
+  background-color: rgb(255 255 255 / 95%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  color: var(--primary-blue);
+}
+
+.mobile-menu>*+* {
+  margin-top: 0.5rem;
+}
+
+.mobile-menu__link {
+  display: block;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+}
+
+.mobile-menu__link:not(.mobile-menu__link--active):hover {
+  background-color: #f3f4f6;
+}
+
+.mobile-menu__link--active {
+  background-color: var(--primary-blue);
+  color: #fff;
+  font-weight: 600;
+}
+
+@media (min-width: 1024px) {
+  .site-nav>*+* {
+    margin-left: 0.5rem;
+  }
+}
+
+
+/* ==========================================================================
+   5. Hero
+   ========================================================================== */
+
+@keyframes shrinkHero {
+  from {
+    min-height: 110vh;
+  }
+
+  to {
+    min-height: 0;
+  }
+}
+
+@keyframes zoomOut {
+  from {
+    transform: translateX(var(--hero-offset-x)) scale(1);
+  }
+
+  to {
+    transform: translateX(0px) scale(calc(1 / var(--hero-scale)));
+  }
+}
+
+@keyframes decreaseOpacity {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes increaseOpacity {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes enlargeLogo {
+  from {
+    transform: translate(-50%, -50%) scale(calc(1 / var(--hero-scale)));
+  }
+
+  to {
+    transform: translate(-49.4%, -54.2%) scale(calc(3.6 / var(--hero-scale)));
+  }
+}
+
+.hero-wrapper {
+  position: relative;
+  z-index: -1;
+  padding: 0;
+
+  background-image: url(./sky.webp);
+  background-size: cover;
+  background-position: top;
+  background-repeat: no-repeat;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  overflow: hidden;
+}
+
+.hero-zoom {
+  transform: translateX(var(--hero-offset-x, 0px));
+  backface-visibility: hidden;
+  transform-origin: var(--transform-origin);
+  will-change: transform;
+}
+
+.hero {
+  position: relative;
+  width: 100dvw;
+  padding: 0 10px;
+  padding-top: 90px;
+
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+
+  transform-origin: var(--transform-origin);
+  transform: scale(var(--hero-scale));
+}
+
+/* --- Animação de abertura --- */
+
+.shrink-anim {
+  min-height: 110vh;
+  animation: shrinkHero 20s cubic-bezier(0.22, 1, 0.36, 1) 0.6s forwards;
+  animation-delay: 6.1s;
+}
+
+.hero-anim {
+  animation: zoomOut 7s cubic-bezier(0.22, 1, 0.36, 1) 5s forwards;
+  animation-delay: 5s;
+}
+
+.decrease-opacity-anim {
+  animation: decreaseOpacity 7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: 5s;
+}
+
+.logo.decrease-opacity-anim {
+  animation:
+    decreaseOpacity 7s cubic-bezier(0.22, 1, 0.36, 1) 5s forwards,
+    enlargeLogo 5s cubic-bezier(0.22, 1, 0.36, 1) 3s forwards;
+}
+
+.increase-opacity-anim {
+  opacity: 0;
+  animation: increaseOpacity 2s forwards;
+  animation-delay: 9s;
+}
+
+/* --- Imagem de Nossa Senhora --- */
+
+.mary-container {
+  position: relative;
+  width: 100%;
+  max-width: var(--mary-size);
+  aspect-ratio: 3448 / 4057;
+  align-self: flex-end;
+
+  background-image: url(./mary.webp);
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+
+  display: flex;
+  justify-content: center;
+}
+
+.mary-container__backdrop {
+  position: absolute;
+  top: -30px;
+  z-index: -1;
+  filter: saturate(1.3) brightness(1.5);
+}
+
+.logo {
+  z-index: 999999;
+  position: absolute;
+  left: var(--heart-x);
+  top: var(--heart-y);
+  width: var(--logo-real);
+
+  transform: translate(-50%, -50%) scale(calc(1 / var(--hero-scale)));
+  will-change: transform, opacity;
+}
+
+.hero-fade {
+  position: absolute;
+  width: 100%;
+  height: 400%;
+  background: radial-gradient(circle,
+      rgb(201 191 159 / 50%) 44%,
+      rgb(245 221 145 / 30%) 50%,
+      rgb(212 175 55 / 0%) 60%);
+  pointer-events: none;
+}
+
+.pergaminho {
+  z-index: 1;
+  position: absolute;
+  bottom: 10px;
+  width: 95%;
+  height: 20%;
+
+  background-image: url(./pergaminho.webp);
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Referência de tamanho para o texto em `cqw` */
+  container-type: inline-size;
+}
+
+#hero-text {
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  text-align: center;
+  color: black;
+  line-height: 1.2;
+  white-space: nowrap;
+  font-size: 3.5cqw;
+}
+
+/* --- Texto do hero --- */
+
+.hero-container {
+  width: 40%;
+  padding-top: 70px;
+  padding-bottom: 20px;
+
+  container-type: inline-size;
+  line-height: 1.2;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero__title {
+  color: var(--primary-blue);
+  font-size: 6cqw;
+  text-transform: uppercase;
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  will-change: opacity;
+}
+
+.hero__location-row {
+  width: 100%;
+  padding-top: 20px;
+  padding-bottom: 30px;
+
+  display: flex;
+  gap: 20px;
+}
+
+.hero__location {
+  font-family: 'Cinzel', serif;
+  font-size: 3.4cqw;
+  -webkit-text-stroke: 0.5px currentColor;
+}
+
+.hero__quote {
+  padding-bottom: 20px;
+  font-style: italic;
+  font-size: 3.2cqw;
+  text-align: center;
+}
+
+/* --- Ornamentos (linhas + losangos) --- */
+
+.spear-line {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.spear-line__rule {
+  flex: 1;
+  width: 50px;
+  height: 1px;
+  background: var(--primary-blue);
+}
+
+.spear-tip {
+  height: 5px;
+  flex-shrink: 0;
+  fill: var(--primary-blue);
+}
+
+.bottom-divider {
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.bottom-divider--full {
+  width: 100%;
+}
+
+.bottom-line {
+  flex: 1;
+  height: 1px;
+}
+
+.bottom-line--left {
+  background: linear-gradient(to right, rgb(0 0 0 / 19%) 60%, #2c384b 60%);
+}
+
+.bottom-line--right {
+  background: linear-gradient(to left, rgb(0 0 0 / 19%) 60%, #2c384b 60%);
+}
+
+.fleuron-svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  fill: #2c384b;
+}
+
+#lock-overlay {
+  z-index: 999;
+  position: absolute;
+  inset: 0;
+  background-color: var(--bg);
+}
+
+#lock-overlay.lock-overlay-anim {
+  animation: decreaseOpacity 2s forwards;
+  animation-delay: 5s;
+}
+
+
+/* ==========================================================================
+   6. Atalhos (under-hero)
+   ========================================================================== */
+
+.under-hero {
+  position: relative;
+  padding: 40px 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  background-image: url(./sky.webp);
+  background-size: contain;
+  background-position: center 15vh;
+}
+
+.under-hero::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -25px;
+  bottom: -1px;
+
+  background: rgb(244 235 228 / 80%);
+
+  clip-path: shape(from 0% 50px,
+      curve to 30% 25px with 15% 0px,
+      line to 70% 25px,
+      curve to 100% 50px with 85% 0px,
+      line to 100% 100%,
+      line to 0% 100%,
+      close);
+}
+
+.under-hero-content {
+  z-index: 1;
+  position: relative;
+  padding: 0 20px;
+  max-width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.quick-links {
+  width: 70%;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  overflow-x: auto;
+
+  border-radius: 24px;
+  background: var(--surface);
+  box-shadow: 0 4px 15px rgb(0 0 0 / 8%);
+}
+
+.quick-link {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+
+  color: #24324d;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1;
+}
+
+.quick-link:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 15%;
+  width: 1px;
+  height: 70%;
+  background: var(--gold);
+}
+
+.quick-link__icon--event {
+  margin-bottom: 20px;
+}
+
+
+/* ==========================================================================
+   7. Cards de boas-vindas / notícias
+   ========================================================================== */
+
+.under-hero__panels {
+  width: 80%;
+  margin-top: 2rem;
+
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 1.5rem;
+}
+
+/* --- Card de boas-vindas --- */
+
+.welcome-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  border: 1px solid rgb(226 232 240 / 80%);
+  border-radius: 1rem;
+  background-color: var(--surface);
+  box-shadow: 0 8px 30px rgb(0 0 0 / 6%);
+}
+
+.welcome-panel__body {
+  flex: 1 1 0%;
+  padding: 1.5rem;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.eyebrow__rule {
+  width: 1.5rem;
+  height: 1px;
+  background-color: #cbd5e1;
+}
+
+.eyebrow__rule--wide {
+  width: 2.5rem;
+}
+
+.eyebrow__cross {
+  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: var(--bright-blue);
+}
+
+.welcome-panel__title {
+  margin-bottom: 0.75rem;
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-style: italic;
+}
+
+.welcome-panel__cta {
+  margin-top: 25px;
+  padding: 10px 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-radius: 9999px;
+  background-color: var(--bright-blue);
+  color: #fff;
+}
+
+.welcome-panel__cta-arrow {
+  width: 0.875rem;
+  height: 0.875rem;
+  margin: 0 10px;
+}
+
+.welcome-panel__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+
+  border-radius: 9999px;
+  background-color: var(--bright-blue);
+  color: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.025em;
+
+  transition:
+    background-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+    color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.welcome-panel__link:hover {
+  background-color: var(--primary-blue);
+}
+
+.welcome-panel__link-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.welcome-panel__media {
+  position: relative;
+  min-height: 220px;
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: #f1f5f9;
+}
+
+.welcome-panel__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* --- Card de notícias --- */
+
+.news-panel {
+  padding: 1.5rem;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  border: 1px solid rgb(226 232 240 / 80%);
+  border-radius: 1rem;
+  background-color: var(--surface);
+  box-shadow: 0 8px 30px rgb(0 0 0 / 6%);
+}
+
+.news-panel__header {
+  padding-bottom: 1rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-bottom: 1px solid var(--line);
+}
+
+.news-panel__heading {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.news-panel__icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--bright-blue);
+}
+
+.news-panel__title {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.025em;
+  color: var(--ink);
+}
+
+.news-panel__all {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
+  color: var(--primary-blue);
+
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.news-panel__all:hover {
+  color: var(--bright-blue);
+}
+
+.news-list>*+* {
+  border-top: 1px solid var(--line);
+}
+
+.news-item {
+  padding: 0.75rem 0;
+
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.news-item__thumb {
+  position: relative;
+  width: 6.5rem;
+  height: 3rem;
+  flex-shrink: 0;
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 0.5rem;
+}
+
+.news-item__thumb--brown {
+  background-color: rgb(120 53 15 / 10%);
+}
+
+.news-item__thumb--orange {
+  background-color: rgb(67 20 7 / 10%);
+}
+
+.news-item__thumb--amber {
+  background-color: rgb(245 158 11 / 10%);
+}
+
+.news-item__thumb-icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+.news-item__thumb-icon--brown {
+  color: #b45309;
+}
+
+.news-item__thumb-icon--orange {
+  color: #ea580c;
+}
+
+.news-item__thumb-icon--amber {
+  color: var(--gold);
+}
+
+.news-item__body {
+  flex: 1 1 0%;
+  min-width: 0;
+}
+
+.news-item__title {
+  overflow: hidden;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.news-item__date {
+  margin-top: 0.125rem;
+
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+
+  font-size: 11px;
+  color: var(--muted-soft);
+}
+
+.news-item__date-icon {
+  width: 0.75rem;
+  height: 0.75rem;
+  color: var(--primary-blue);
+}
+
+.news-item__more {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
+  color: var(--muted-strong);
+  white-space: nowrap;
+
+  transition:
+    color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.news-item:hover .news-item__title,
+.news-item:hover .news-item__more {
+  color: var(--bright-blue);
+}
+
+.news-item:hover .news-item__more {
+  transform: translateX(0.125rem);
+}
+
+@media (min-width: 768px) {
+  .welcome-panel {
+    flex-direction: row;
+  }
+
+  .welcome-panel__body {
+    padding: 2rem;
+  }
+
+  .welcome-panel__media {
+    width: 41.666667%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .under-hero__panels {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+
+  .welcome-panel {
+    grid-column: span 7 / span 7;
+  }
+
+  .news-panel {
+    grid-column: span 5 / span 5;
+  }
+}
+
+
+/* ==========================================================================
+   8. Faixa de horários
+   ========================================================================== */
+
+.schedule-band {
+  padding: 10px 0 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5%;
+
+  background-image: url(./bottom-bg.jpeg);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.schedule-band__quote {
+  text-align: center;
+}
+
+.schedule-band__quote p {
+  font-size: 20px;
+  font-style: italic;
+  text-align: center;
+}
+
+.mass-times {
+  padding: 1.25rem;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+
+  border: 1px solid var(--gold);
+  border-radius: 1rem;
+  background-color: var(--primary-blue);
+  color: #fff;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -4px rgb(0 0 0 / 10%);
+}
+
+.mass-times__main {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mass-times__icon {
+  width: 3rem;
+  height: 3rem;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgb(255 255 255 / 20%);
+  border-radius: 9999px;
+  background-color: rgb(255 255 255 / 10%);
+}
+
+.mass-times__icon-svg {
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--gold-light);
+}
+
+.mass-times__title {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  letter-spacing: 0.025em;
+  color: #fff;
+}
+
+.mass-times__schedule {
+  margin-top: 0.125rem;
+
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 300;
+  color: #e2e8f0;
+}
+
+.mass-times__action {
+  width: 100%;
+  text-align: center;
+}
+
+.mass-times__button {
+  display: inline-block;
+  width: 100%;
+  padding: 0.625rem 1.25rem;
+
+  border: 1px solid rgb(255 255 255 / 40%);
+  border-radius: 9999px;
+
+  font-size: 0.75rem;
+  line-height: 1rem;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+
+  transition:
+    background-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mass-times__button:hover {
+  border-color: #fff;
+  background-color: rgb(255 255 255 / 10%);
+}
+
+@media (min-width: 640px) {
+  .mass-times__title {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+
+  .mass-times__schedule {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .mass-times {
+    flex-direction: row;
+  }
+
+  .mass-times__action {
+    width: auto;
+    padding-left: 1.5rem;
+    border-left: 1px solid rgb(255 255 255 / 20%);
+  }
+
+  .mass-times__button {
+    width: auto;
+  }
+}
+
+
+/* ==========================================================================
+   9. Footer
+   ========================================================================== */
+
+.site-footer {
+  padding-top: 2rem;
+  padding-bottom: 1rem;
+
+  border-top: 1px solid rgb(51 65 85 / 60%);
+  background-color: var(--primary-blue);
+  color: #fff;
+}
+
+.site-footer__inner {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.site-footer__grid {
+  padding-bottom: 1.5rem;
+
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.site-footer__grid>*+* {
+  border-top: 1px solid rgb(255 255 255 / 10%);
+}
+
+/* --- Identidade --- */
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding-right: 1rem;
+}
+
+.footer-brand__badge {
+  width: 3rem;
+  height: 3rem;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgb(176 141 87 / 40%);
+  border-radius: 9999px;
+  background-color: rgb(255 255 255 / 5%);
+}
+
+.footer-brand__icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--gold-light);
+}
+
+.footer-brand__text {
+  font-family: 'Cinzel', serif;
+  line-height: 1.375;
+}
+
+.footer-brand__name {
+  display: block;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.footer-brand__location {
+  display: block;
+  margin-top: 0.125rem;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: #cbd5e1;
+}
+
+/* --- Redes sociais --- */
+
+.footer-social {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+  padding-top: 1rem;
+}
+
+.footer-social__link {
+  width: 2.25rem;
+  height: 2.25rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgb(255 255 255 / 20%);
+  border-radius: 9999px;
+  background-color: rgb(255 255 255 / 10%);
+  color: #fff;
+
+  transition:
+    background-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.footer-social__link:hover {
+  background-color: rgb(255 255 255 / 20%);
+  transform: scale(1.05);
+}
+
+.footer-social__icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.footer-social__icon--fill {
+  fill: currentColor;
+}
+
+.footer-social__icon--stroke {
+  fill: none;
+  stroke: currentColor;
+}
+
+/* --- Contato --- */
+
+.footer-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 1rem;
+
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 300;
+  color: #e2e8f0;
+}
+
+.footer-contact__row {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.footer-contact__row--spaced {
+  margin-top: 0.25rem;
+}
+
+.footer-contact__icon {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  color: var(--gold-light);
+}
+
+/* --- Bênção --- */
+
+.footer-blessing {
+  padding-top: 1rem;
+  text-align: center;
+}
+
+.footer-blessing__text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.875rem;
+  line-height: 1.375;
+  font-style: italic;
+  color: #e2e8f0;
+}
+
+.footer-blessing__ornament {
+  margin-top: 0.5rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-blessing__rule {
+  width: 1.5rem;
+  height: 1px;
+  background-color: rgb(255 255 255 / 20%);
+}
+
+.footer-blessing__mark {
+  margin: 0 0.25rem;
+  font-size: 10px;
+}
+
+/* --- Rodapé inferior --- */
+
+.site-footer__bottom {
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgb(255 255 255 / 10%);
+  text-align: center;
+}
+
+.site-footer__copyright {
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  color: #cbd5e1;
+}
+
+@media (min-width: 768px) {
+  .site-footer__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .site-footer__grid>*+* {
+    border-top: 0;
+  }
+
+  .footer-social {
+    padding-top: 0;
+  }
+
+  .footer-contact {
+    padding-top: 0;
+  }
+
+  .footer-blessing {
+    padding-top: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .site-footer__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .site-footer__grid>*+* {
+    border-top: 0;
+    border-left: 1px solid rgb(255 255 255 / 10%);
+  }
+
+  .footer-social {
+    justify-content: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .footer-contact {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .footer-blessing {
+    padding-left: 1.5rem;
+    text-align: left;
+  }
+
+  .footer-blessing__ornament {
+    justify-content: flex-start;
+  }
+}
+
+
+/* ==========================================================================
+   10. Modais
+   ========================================================================== */
+
+.modal-overlay {
+  z-index: 100;
+  position: fixed;
+  inset: 0;
+  padding: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: rgb(0 0 0 / 60%);
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 500px;
+  overflow: hidden;
+
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 10px 25px rgb(0 0 0 / 40%);
+}
+
+.modal-header {
+  padding: 15px 20px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  background-color: var(--primary-blue);
+  color: #fff;
+}
+
+.modal-title {
+  font-family: 'Yeseva One', serif;
+  font-size: 1.4rem;
+}
+
+.close-btn {
+  padding: 0;
+  color: #fff;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.modal-content-group {
+  margin-bottom: 20px;
+}
+
+.modal-content-group h3 {
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+
+  border-bottom: 1px solid #eee;
+  color: var(--gold);
+
+  font-family: 'Yeseva One', serif;
+  font-size: 1.2rem;
+}
+
+.point-list li {
+  position: relative;
+  display: flex;
+  padding-left: 10px;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.point-list li::before {
+  content: '•';
+  display: inline-block;
+  width: 1em;
+  margin-left: -1em;
+  color: var(--primary-blue);
+  font-weight: bold;
+}
+
+.modal-footer {
+  padding: 15px 20px;
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  background-color: transparent;
+}
+
+.modal-note {
+  margin-right: auto;
+  color: #666;
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+.btn-primary {
+  padding: 8px 15px;
+
+  border-radius: 6px;
+  background-color: var(--primary-blue);
+  color: #fff;
+
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #2e53a9;
+}
+
+
+/* ==========================================================================
+   11. Botão "voltar ao topo"
+   ========================================================================== */
+
+#chevron-up-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px;
+
+  display: flex;
+
+  border-radius: 50%;
+  background: var(--primary-blue);
+
+  cursor: pointer;
+}
+
+
+/* ==========================================================================
+   12. Barra de rolagem
+   ========================================================================== */
+
+body::-webkit-scrollbar {
+  width: 5px;
+}
+
+body::-webkit-scrollbar-track-piece {
+  border-radius: 12px;
+  background-color: var(--bg);
+}
+
+body::-webkit-scrollbar-thumb {
+  border-radius: 12px;
+  background-color: var(--primary-blue);
+}
+
+@media (max-width: 1059px) {
+  .site-nav {
+    display: none;
+  }
+
+  .site-header__toggle {
+    display: flex;
+  }
+}
+
+@media (max-width: 750px) {
+  .quick-links {
+    width: 80%;
+  }
+
+  .under-hero__panels {
+    width: 100%;
+  }
+}
+
+@media (orientation: portrait) {
+  .hero-container {
+    position: absolute;
+  }
+}
